@@ -1,0 +1,170 @@
+# Example MetaDeveloper Workflow
+
+enabled: True
+rounds:
+  - user_query: |-
+      I want to create a simple application that calculates the area of a rectangle. Please use the MetaDeveloper to analyze, generate, and debug the application.
+    state: created
+    post_list:
+      - message: |-
+          I want to create a simple application that calculates the area of a rectangle. Please use the MetaDeveloper to analyze, generate, and debug the application.
+        send_from: User
+        send_to: Planner
+        attachment_list: []
+      - message: |-
+          Here is the task for the MetaDeveloper:
+
+          1. Analyze the requirements for the application to calculate the area of a rectangle.
+          2. Generate the application code based on the analysis.
+          3. Create debugging tools for the generated application.
+        send_from: Planner
+        send_to: MetaDeveloper
+        attachment_list:
+          - type: init_plan
+            content: |-
+              1. Analyze the requirements for the application to calculate the area of a rectangle.
+              2. Generate the application code based on the analysis <sequentially depends on 1>.
+              3. Create debugging tools for the generated application <sequentially depends on 2>.
+              4. Report the results to the Planner <interactively depends on 3>.
+          - type: plan
+            content: |-
+              1. Analyze the requirements for the application to calculate the area of a rectangle.
+              2. Generate the application code based on the analysis.
+              3. Create debugging tools for the generated application.
+              4. Report the results to the Planner.
+          - type: current_plan_step
+            content: 1. Analyze the requirements for the application to calculate the area of a rectangle.
+      - message: |-
+          Starting the analysis phase...
+          Requirements:
+          - Input: Length and width of the rectangle.
+          - Output: Area of the rectangle.
+          - Functionality: A single function to calculate the area.
+
+          Analysis completed successfully.
+        send_from: MetaDeveloper
+        send_to: Planner
+        attachment_list:
+          - type: analysis_insights
+            content: |-
+              {
+                "requirements": {
+                  "inputs": ["length", "width"],
+                  "outputs": ["area"],
+                  "functionality": "A single function to calculate the area of a rectangle."
+                }
+              }
+      - message: |-
+          Analysis phase completed. Proceeding to the generation phase.
+        send_from: Planner
+        send_to: MetaDeveloper
+        attachment_list: []
+      - message: |-
+          Starting the generation phase...
+          Generated Code:
+          ```python
+          def calculate_area(length, width):
+              """
+              Calculate the area of a rectangle.
+
+              Args:
+                  length (float): The length of the rectangle.
+                  width (float): The width of the rectangle.
+
+              Returns:
+                  float: The area of the rectangle.
+              """
+              return length * width
+          ```
+
+          Code generation completed successfully.
+        send_from: MetaDeveloper
+        send_to: Planner
+        attachment_list:
+          - type: generated_code
+            content: |-
+              {
+                "module_name": "rectangle_area",
+                "code": "def calculate_area(length, width):\\n    \"\"\"\\n    Calculate the area of a rectangle.\\n\\n    Args:\\n        length (float): The length of the rectangle.\\n        width (float): The width of the rectangle.\\n\\n    Returns:\\n        float: The area of the rectangle.\\n    \"\"\"\\n    return length * width\\n"
+              }
+      - message: |-
+          Code generation phase completed. Proceeding to the debugging phase.
+        send_from: Planner
+        send_to: MetaDeveloper
+        attachment_list: []
+      - message: |-
+          Starting the debugging phase...
+          Debugging Tools:
+          - Log Wrapper:
+            ```python
+            def log_wrapper(func):
+                def wrapper(*args, **kwargs):
+                    print(f"Calling {func.__name__} with args={args}, kwargs={kwargs}")
+                    result = func(*args, **kwargs)
+                    print(f"{func.__name__} returned {result}")
+                    return result
+                return wrapper
+            ```
+
+          - Debug Script:
+            ```python
+            import pdb; pdb.set_trace()
+            ```
+
+          Debugging tools created successfully.
+        send_from: MetaDeveloper
+        send_to: Planner
+        attachment_list:
+          - type: debugging_tools
+            content: |-
+              {
+                "log_wrappers": [
+                  "def log_wrapper(func):\\n    def wrapper(*args, **kwargs):\\n        print(f\"Calling {func.__name__} with args={args}, kwargs={kwargs}\")\\n        result = func(*args, **kwargs)\\n        print(f\"{func.__name__} returned {result}\")\\n        return result\\n    return wrapper\\n"
+                ],
+                "debug_scripts": [
+                  "import pdb; pdb.set_trace()"
+                ]
+              }
+      - message: |-
+          Debugging phase completed. The application has been successfully analyzed, generated, and debugged.
+
+          Summary:
+          - Analysis Insights:
+            - Inputs: Length, Width
+            - Outputs: Area
+            - Functionality: A single function to calculate the area of a rectangle.
+          - Generated Code:
+            ```python
+            def calculate_area(length, width):
+                """
+                Calculate the area of a rectangle.
+
+                Args:
+                    length (float): The length of the rectangle.
+                    width (float): The width of the rectangle.
+
+                Returns:
+                    float: The area of the rectangle.
+                """
+                return length * width
+            ```
+          - Debugging Tools:
+            - Log Wrapper:
+              ```python
+              def log_wrapper(func):
+                  def wrapper(*args, **kwargs):
+                      print(f"Calling {func.__name__} with args={args}, kwargs={kwargs}")
+                      result = func(*args, **kwargs)
+                      print(f"{func.__name__} returned {result}")
+                      return result
+                  return wrapper
+              ```
+            - Debug Script:
+              ```python
+              import pdb; pdb.set_trace()
+              ```
+
+          Task completed successfully.
+        send_from: Planner
+        send_to: User
+        attachment_list: []

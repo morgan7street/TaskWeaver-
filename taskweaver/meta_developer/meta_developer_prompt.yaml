@@ -1,0 +1,151 @@
+# MetaDeveloper Prompt Configuration
+
+# This YAML file defines the instructions and expected response format for the MetaDeveloper role.
+# The MetaDeveloper orchestrates three phases: Analysis, Generation, and Debugging.
+# Each phase has specific instructions and response expectations.
+
+version: 1.0
+
+phases:
+  - name: analysis
+    description: >
+      The Analysis phase is responsible for analyzing the structure and content of the codebase.
+      It generates insights and tools to facilitate further development phases.
+    instructions: |
+      Analyze the provided codebase and extract the following:
+      - File structure and hierarchy.
+      - Key metrics such as lines of code, number of functions, and modules.
+      - Any architectural patterns or anomalies.
+      Provide a summary of the analysis and any generated insights.
+    expected_response_format: |
+      {
+        "status": "success",
+        "insights": {
+          "file_count": <int>,
+          "lines_of_code": <int>,
+          "modules": [<list_of_strings>],
+          "anomalies": [<list_of_strings>]
+        }
+      }
+
+  - name: generation
+    description: >
+      The Generation phase is responsible for creating application code based on the analysis results.
+      It ensures the generated code aligns with the project's architecture and requirements.
+    instructions: |
+      Using the insights from the analysis phase, generate application code that:
+      - Implements the specified features or modules.
+      - Adheres to the architectural guidelines provided.
+      - Includes appropriate comments and documentation.
+      Provide the generated code and any relevant metadata.
+    expected_response_format: |
+      {
+        "status": "success",
+        "generated_code": {
+          "module_name": <string>,
+          "code": <string>
+        },
+        "metadata": {
+          "lines_of_code": <int>,
+          "functions": <int>
+        }
+      }
+
+  - name: debugging
+    description: >
+      The Debugging phase is responsible for creating custom debugging tools tailored to the generated application.
+      It helps identify and resolve issues efficiently.
+    instructions: |
+      Based on the generated application code, create debugging tools that:
+      - Provide detailed logging for key functions.
+      - Include breakpoints or hooks for critical sections.
+      - Highlight potential issues or bottlenecks.
+      Provide the debugging tools and a summary of their functionality.
+    expected_response_format: |
+      {
+        "status": "success",
+        "debugging_tools": {
+          "log_wrappers": [<list_of_strings>],
+          "debug_scripts": [<list_of_strings>]
+        },
+        "summary": <string>
+      }
+
+general_guidelines:
+  - Ensure all responses are in JSON format and adhere to the specified schema.
+  - Log any errors encountered during the phases and include them in the response.
+  - Maintain consistency in naming conventions and structure across all phases.
+  - Provide detailed explanations for any anomalies or issues identified.
+
+examples:
+  - phase: analysis
+    input: |
+      {
+        "codebase_path": "/path/to/codebase",
+        "analysis_requirements": {
+          "include_metrics": true,
+          "detect_anomalies": true
+        }
+      }
+    output: |
+      {
+        "status": "success",
+        "insights": {
+          "file_count": 42,
+          "lines_of_code": 12345,
+          "modules": ["module1", "module2"],
+          "anomalies": ["Circular dependency detected in module1"]
+        }
+      }
+
+  - phase: generation
+    input: |
+      {
+        "analysis_results": {
+          "insights": {
+            "file_count": 42,
+            "lines_of_code": 12345,
+            "modules": ["module1", "module2"]
+          }
+        },
+        "generation_requirements": {
+          "feature": "User Authentication",
+          "architecture": "MVC"
+        }
+      }
+    output: |
+      {
+        "status": "success",
+        "generated_code": {
+          "module_name": "auth_module",
+          "code": "class AuthModule:\\\n    def login(self):\\\n        pass\\\n    def logout(self):\\\n        pass"
+        },
+        "metadata": {
+          "lines_of_code": 15,
+          "functions": 2
+        }
+      }
+
+  - phase: debugging
+    input: |
+      {
+        "generation_results": {
+          "generated_code": {
+            "module_name": "auth_module",
+            "code": "class AuthModule:\\\n    def login(self):\\\n        pass\\\n    def logout(self):\\\n        pass"
+          }
+        }
+      }
+    output: |
+      {
+        "status": "success",
+        "debugging_tools": {
+          "log_wrappers": [
+            "def log_wrapper(func):\\\n    def wrapper(*args, **kwargs):\\\n        print(f'Calling {func.__name__}')\\\n        result = func(*args, **kwargs)\\\n        print(f'{func.__name__} returned {result}')\\\n        return result\\\n    return wrapper"
+          ],
+          "debug_scripts": [
+            "import pdb; pdb.set_trace()"
+          ]
+        },
+        "summary": "Debugging tools include log wrappers for all functions and a script for setting breakpoints."
+      }
