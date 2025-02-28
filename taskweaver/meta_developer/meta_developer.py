@@ -15,9 +15,9 @@ class MetaDeveloper(Role):
 
     def __init__(self, logger: TelemetryLogger, tracing: Tracing):
         super().__init__(logger=logger, tracing=tracing)
-        self.analysis_phase = AnalysisPhase()
-        self.generation_phase = GenerationPhase()
-        self.debugging_phase = DebuggingPhase()
+        self.analysis_phase = AnalysisPhase(logger=self.logger)
+        self.generation_phase = GenerationPhase(logger=self.logger)
+        self.debugging_phase = DebuggingPhase(logger=self.logger)
 
     @tracing_decorator
     def execute_analysis(self, task_data):
